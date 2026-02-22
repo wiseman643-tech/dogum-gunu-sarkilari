@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İsme Özel Doğum Günü Şarkıları</title>
+    <!-- Tailwind CSS (Modern ve hızlı tasarım için) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Özel renk ayarları (Ekran görüntüsündeki gece mavisi/koyu temaya yakın) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0d1117',
+                        cardbg: '#161b22',
+                        cardhover: '#21262d',
+                        bordercol: '#30363d'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Arama çubuğuna tıklandığında çıkan varsayılan mavi çizgiyi yumuşatmak için */
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #58a6ff;
+        }
+    </style>
+</head>
+<body class="bg-darkbg text-white font-sans min-h-screen">
+
+    <!-- Ana Konteyner -->
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        
+        <!-- Başlık Bölümü -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold mb-3 flex items-center justify-center gap-3">
+                <span>🎂</span> İsme Özel Doğum Günü Şarkıları
+            </h1>
+            <p class="text-gray-400 text-sm md:text-base">
+                İsmini yaz → videoyu aç → tek tıkla paylaş 🎉
+            </p>
+        </div>
+
+        <!-- Ana İçerik (Arama ve Liste) -->
+        <div id="mainContent">
+            <!-- Arama Kutusu -->
+            <div class="mb-8 relative">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="w-full bg-cardbg border border-bordercol rounded-xl px-5 py-4 text-white text-lg placeholder-gray-500 transition-shadow"
+                    placeholder="Hangi ismi arıyorsunuz? (Örn: Can)"
+                    autocomplete="off"
+                >
+            </div>
+
+            <!-- İsimlerin Listeleneceği Izgara (Grid) Alanı -->
+            <div id="namesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- JavaScript burayı otomatik dolduracak -->
+            </div>
+        </div>
+
+        <!-- Video Gösterim Alanı (Başlangıçta Gizli) -->
+        <div id="videoContainer" class="hidden flex-col items-center mt-4">
+            <button id="backBtn" class="mb-8 self-start text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors font-semibold">
+                <span>←</span> Geri Dön ve Diğer İsimleri Gör
+            </button>
+            <h2 id="videoTitle" class="text-2xl md:text-3xl font-bold mb-6 text-center text-yellow-400"></h2>
+            <div class="w-full aspect-video rounded-xl overflow-hidden border border-bordercol shadow-lg bg-black">
+                <iframe id="youtubePlayer" class="w-full h-full" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Mantığı -->
+    <script>
+        // 1. Veritabanı Ayarları: Google Sheets CSV Bağlantısı
+        // DİKKAT: Kendi sayfanızı yayınladıktan sonra aşağıdaki linki kendi CSV linkinizle değiştirin.
+        const SHEET_CSV_URL = "BURAYA_GOOGLE_SHEETS_CSV_LINKINIZI_YAPISTIRIN";
+
+        // Yedek Veri (Google Sheets linki girilene kadar veya bağlantı koparsa bu veriler görünür)
+        let appData = [
+            { id: 1, name: "Can", youtubeId: "dQw4w9WgXcQ" },
+            { id: 2, name: "Candan", youtubeId: "jNQXAC9IVRw" },
+            { id: 3, name: "Caner", youtubeId: "kJQP7kiw5Fk" },
+            { id: 4, name: "Canberk", youtubeId: "9bZkp7q19f0" },
+            { id: 5, name: "Alican", youtubeId: "JGwWNGJdvx8" },
+            { id: 6, name: "Ayşe", youtubeId: "dQw4w9WgXcQ" },
+            { id: 7, name: "Ahmet", youtubeId: "jNQXAC9IVRw" },
+            { id: 8, name: "Zeynep", youtubeId: "kJQP7kiw5Fk" }
+        ];
+
+        // 2. HTML'deki elementleri JavaScript'e tanıtıyoruz
+        const searchInput = document.getElementById('searchInput');
+        const namesGrid = document.getElementById('namesGrid');
+        const mainContent = document.getElementById('mainContent');
+        const videoContainer = document.getElementById('videoContainer');
+        const videoTitle = document.getElementById('videoTitle');
+        const youtubePlayer = document.getElementById('youtubePlayer');
+        const backBtn = document.getElementById('backBtn');
+
+        // 3. İsimleri Ekrana Çizdirme Fonksiyonu
+        function renderNames(namesToDisplay) {
+            namesGrid.innerHTML = '';
+
+            if (namesToDisplay.length === 0) {
+                namesGrid.innerHTML = `
+                    <div class="col-span-full text-center py-10 text-gray-500">
+                        Bu isimde henüz bir şarkı bulunamadı. 😔
+                    </div>
+                `;
+                return;
+            }
+
+            namesToDisplay.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-cardbg hover:bg-cardhover border border-bordercol p-5 rounded-xl cursor-pointer transition-colors duration-200 group flex flex-col justify-center';
+                
+                // Karta tıklandığında URL'nin sonuna ismini ekle (İşte Tek Sayfa Mantığı!)
+                card.onclick = () => {
+                    window.location.hash = item.name;
+                };
+
+                card.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-100 group-hover:text-blue-400 transition-colors underline decoration-transparent group-hover:decoration-blue-400 underline-offset-4">
+                        ${item.name}
+                    </h3>
+                    <span class="text-sm text-gray-500 mt-2">YouTube'da İzle</span>
+                `;
+                namesGrid.appendChild(card);
+            });
+        }
+
+        // 4. Arama Kutusunu Dinleme (Filtreleme İşlemi)
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value;
+            const lowerSearchTerm = searchTerm.toLocaleLowerCase('tr-TR');
+
+            const filteredData = appData.filter(item => {
+                const lowerName = item.name.toLocaleLowerCase('tr-TR');
+                return lowerName.includes(lowerSearchTerm);
+            });
+
+            renderNames(filteredData);
+        });
+
+        // 5. Yönlendirme (Router) Mantığı - URL Hash Dinleyici
+        function handleHashChange() {
+            // Hash'ten # işaretini kaldır ve boşlukları Türkçe karakterleri bozmadan çöz
+            const hash = decodeURIComponent(window.location.hash.substring(1));
+
+            if (hash) {
+                // URL'deki isme uygun veriyi bul
+                const person = appData.find(p => p.name.toLocaleLowerCase('tr-TR') === hash.toLocaleLowerCase('tr-TR'));
+
+                if (person) {
+                    // İsmi bulduk! Ana ekranı gizle, video ekranını göster
+                    mainContent.classList.add('hidden');
+                    videoContainer.classList.remove('hidden');
+                    videoContainer.classList.add('flex');
+                    
+                    // Başlığı ve YouTube Iframe'ini güncelle (Otomatik başlaması için autoplay=1 ekledik)
+                    videoTitle.innerHTML = `🎉 İyi Ki Doğdun ${person.name}! 🎂`;
+                    youtubePlayer.src = `https://www.youtube.com/embed/${person.youtubeId}?autoplay=1`;
+                    
+                    // Sayfayı yukarı kaydır
+                    window.scrollTo(0, 0);
+                } else {
+                    // İsim veritabanında yoksa ana sayfaya dön
+                    window.location.hash = '';
+                }
+            } else {
+                // URL'de isim yoksa (ana sayfadaysak) listeyi göster, videoyu gizle
+                mainContent.classList.remove('hidden');
+                videoContainer.classList.add('hidden');
+                videoContainer.classList.remove('flex');
+                
+                // Arka planda video çalmasını durdurmak için src'yi temizle
+                youtubePlayer.src = '';
+            }
+        }
+
+        // Geri dön butonuna tıklanınca hash'i temizle (ana sayfaya döner)
+        backBtn.addEventListener('click', () => {
+            window.location.hash = '';
+        });
+
+        // 6. Başlangıç (Init) Fonksiyonu ve Google Sheets'ten Veri Çekme
+        async function initApp() {
+            namesGrid.innerHTML = '<div class="col-span-full text-center py-10 text-gray-400">Veriler yükleniyor... ⏳</div>';
+
+            if (SHEET_CSV_URL !== "BURAYA_GOOGLE_SHEETS_CSV_LINKINIZI_YAPISTIRIN") {
+                try {
+                    const response = await fetch(SHEET_CSV_URL);
+                    const text = await response.text();
+                    
+                    // CSV verisini işle (satırlara böl)
+                    const rows = text.split('\n');
+                    const newData = [];
+                    
+                    // İlk satır başlık (İsim, Link) sayıp 1'den başlıyoruz
+                    for(let i = 1; i < rows.length; i++) {
+                        const row = rows[i].trim();
+                        if(row) {
+                            const columns = row.split(','); // Virgülle ayır
+                            if(columns.length >= 2) {
+                                let name = columns[0].trim();
+                                let youtubeInput = columns[1].trim();
+                                let youtubeId = youtubeInput;
+                                
+                                // Gelişmiş Özellik: Admin tam link girerse içinden ID'yi otomatik ayıkla
+                                if(youtubeInput.includes('v=')) {
+                                    youtubeId = youtubeInput.split('v=')[1].split('&')[0];
+                                } else if(youtubeInput.includes('youtu.be/')) {
+                                    youtubeId = youtubeInput.split('youtu.be/')[1].split('?')[0];
+                                }
+
+                                newData.push({ id: i, name: name, youtubeId: youtubeId });
+                            }
+                        }
+                    }
+                    
+                    if(newData.length > 0) {
+                        appData = newData; // Yeni verileri sisteme kaydet
+                    }
+                } catch (error) {
+                    console.error("Google Sheets'ten veri çekilemedi. Yedek veri kullanılıyor.", error);
+                }
+            }
+
+            // Sayfa yüklendiğinde yönlendirmeyi ve listelemeyi başlat
+            window.addEventListener('hashchange', handleHashChange);
+            handleHashChange(); 
+            renderNames(appData);
+        }
+
+        // Uygulamayı Başlat
+        initApp();
+    </script>
+</body>
+</html>
