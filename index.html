@@ -3,98 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İsme Özel Doğum Günü Şarkıları</title>
-    <!-- Tailwind CSS (Modern ve hızlı tasarım için) -->
+    <title>İsme Özel Doğum Günü Şarkıları 🎂</title>
+    
+    <!-- Daha Şirin ve Okunabilir Bir Font: Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Özel renk ayarları (Ekran görüntüsündeki gece mavisi/koyu temaya yakın) -->
+    
+    <!-- Şirin Renk Paleti ve Ayarlar -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                    },
                     colors: {
-                        darkbg: '#0d1117',
-                        cardbg: '#161b22',
-                        cardhover: '#21262d',
-                        bordercol: '#30363d'
+                        soft: {
+                            bg: '#fdfbfb',      /* Çok açık sıcak gri/beyaz arka plan */
+                            pink: '#ff9a9e',    /* Şirin pembe */
+                            blue: '#a1c4fd',    /* Bebek mavisi */
+                            yellow: '#fbc2eb',  /* Açık lila/sarımsı */
+                            dark: '#4a4a4a',    /* Yumuşak siyah (metinler için) */
+                            gray: '#f3f4f6'     /* Kart arkaplanları için */
+                        }
+                    },
+                    boxShadow: {
+                        'cute': '0 10px 25px -5px rgba(255, 154, 158, 0.2)',
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)'
                     }
                 }
             }
         }
     </script>
+
     <style>
-        /* Arama çubuğuna tıklandığında çıkan varsayılan mavi çizgiyi yumuşatmak için */
-        input:focus {
+        body {
+            /* Göz yormayan, açık pastel sarı arka plan */
+            background-color: #fffde7;
+            background-image: linear-gradient(120deg, #fffde7 0%, #fff9c4 100%);
+            color: #4a4a4a;
+        }
+
+        /* Tıklama efektlerini yumuşat */
+        .cute-input:focus {
             outline: none;
-            box-shadow: 0 0 0 2px #58a6ff;
+            border-color: #ff9a9e;
+            box-shadow: 0 0 0 4px rgba(255, 154, 158, 0.2);
+        }
+
+        /* Mobilde Scrollbar'ı gizle ama kaydırılabilir olsun */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        
+        /* Zıplama Animasyonu */
+        @keyframes bounce-soft {
+            0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+            50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
+        }
+        .animate-bounce-soft {
+            animation: bounce-soft 2s infinite;
+        }
+
+        /* Yükleniyor Animasyonu */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff9a9e;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="bg-darkbg text-white font-sans min-h-screen">
+<body class="min-h-screen flex flex-col items-center">
 
-    <!-- Ana Konteyner -->
-    <div class="max-w-4xl mx-auto px-4 py-12">
+    <!-- Ana Konteyner (Mobilde kenarlardan boşluklu) -->
+    <div class="max-w-4xl w-full mx-auto px-5 py-8 md:py-12">
         
         <!-- Başlık Bölümü -->
         <div class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold mb-3 flex items-center justify-center gap-3">
-                <span>🎂</span> İsme Özel Doğum Günü Şarkıları
+            <div class="text-5xl mb-4 animate-bounce-soft">🎁</div>
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-3 text-soft-dark tracking-tight">
+                İsme Özel Doğum Günü
             </h1>
-            <p class="text-gray-400 text-sm md:text-base">
-                İsmini yaz → videoyu aç → tek tıkla paylaş 🎉
+            <p class="text-gray-500 text-base md:text-lg font-semibold">
+                İsmini ara, şarkını dinle ve sevdiklerinle paylaş! 🎉
             </p>
         </div>
 
-        <!-- Ana İçerik (Arama ve Liste) -->
-        <div id="mainContent">
+        <!-- Ana İçerik (Arama, İstek ve Liste) -->
+        <div id="mainContent" class="w-full space-y-8">
+            
             <!-- Arama Kutusu -->
-            <div class="mb-8 relative">
+            <div class="relative max-w-xl mx-auto">
+                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-2xl">
+                    🔍
+                </div>
                 <input 
                     type="text" 
                     id="searchInput" 
-                    class="w-full bg-cardbg border border-bordercol rounded-xl px-5 py-4 text-white text-lg placeholder-gray-500 transition-shadow"
-                    placeholder="Hangi ismi arıyorsunuz? (Örn: Can)"
+                    class="cute-input w-full pl-14 pr-6 py-4 md:py-5 text-lg md:text-xl rounded-full border-2 border-transparent bg-white shadow-cute transition-all text-soft-dark placeholder-gray-400 font-bold"
+                    placeholder="Hangi ismi arıyorsun? (Örn: Can)"
                     autocomplete="off"
                 >
             </div>
 
-            <!-- İsimlerin Listeleneceği Izgara (Grid) Alanı -->
-            <div id="namesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- İstek Formu (Çok Şirin ve Belirgin) -->
+            <div class="max-w-xl mx-auto bg-gradient-to-r from-blue-50 to-pink-50 rounded-3xl p-6 md:p-8 shadow-sm border border-white">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-2xl">✍️</span>
+                    <h3 class="text-lg md:text-xl font-bold text-soft-dark">
+                        Aradığın ismi bulamadın mı?
+                    </h3>
+                </div>
+                <p class="text-gray-500 text-sm md:text-base mb-5 font-medium">
+                    Hemen aşağıya yazıp bize gönder, en kısa sürede şarkısını hazırlayıp listeye ekleyelim!
+                </p>
+                
+                <form id="requestForm" class="flex flex-col sm:flex-row gap-3">
+                    <input 
+                        type="text" 
+                        id="requestNameInput" 
+                        class="cute-input flex-1 px-5 py-3 text-base rounded-2xl border-2 border-white shadow-sm font-bold placeholder-gray-400"
+                        placeholder="İstediğin ismi yaz..."
+                        required
+                    >
+                    <button type="submit" id="requestSubmitBtn" class="bg-soft-pink hover:bg-pink-400 text-white font-bold py-3 px-6 rounded-2xl shadow-cute transition-colors duration-200 active:scale-95">
+                        Gönder 🚀
+                    </button>
+                </form>
+                <!-- Bildirim Mesajı Alanı -->
+                <div id="requestMessage" class="hidden mt-4 text-center font-bold text-sm px-4 py-3 rounded-xl"></div>
+            </div>
+
+            <!-- Ayırıcı Çizgi -->
+            <div class="flex items-center gap-4 py-2">
+                <div class="h-px flex-1 bg-gray-200"></div>
+                <span class="text-gray-400 font-bold text-sm uppercase tracking-wider">İSİM LİSTESİ</span>
+                <div class="h-px flex-1 bg-gray-200"></div>
+            </div>
+
+            <!-- İsimlerin Listeleneceği Izgara -->
+            <div id="namesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
                 <!-- JavaScript burayı otomatik dolduracak -->
             </div>
         </div>
 
         <!-- Video Gösterim Alanı (Başlangıçta Gizli) -->
-        <div id="videoContainer" class="hidden flex-col items-center mt-4">
-            <button id="backBtn" class="mb-8 self-start text-blue-400 hover:text-blue-300 flex items-center gap-2 transition-colors font-semibold">
-                <span>←</span> Geri Dön ve Diğer İsimleri Gör
+        <div id="videoContainer" class="hidden flex-col items-center mt-2 w-full max-w-3xl mx-auto">
+            
+            <button id="backBtn" class="mb-6 self-start bg-white hover:bg-gray-50 text-soft-dark font-bold py-3 px-5 rounded-2xl shadow-sm border border-gray-100 transition-all flex items-center gap-2 active:scale-95">
+                <span class="text-xl">⬅️</span> Geri Dön
             </button>
-            <h2 id="videoTitle" class="text-2xl md:text-3xl font-bold mb-6 text-center text-yellow-400"></h2>
-            <div class="w-full aspect-video rounded-xl overflow-hidden border border-bordercol shadow-lg bg-black">
-                <iframe id="youtubePlayer" class="w-full h-full" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            
+            <div class="w-full bg-white p-4 md:p-6 rounded-3xl shadow-cute mb-6">
+                <h2 id="videoTitle" class="text-xl md:text-3xl font-extrabold mb-5 text-center text-soft-dark"></h2>
+                
+                <div class="w-full aspect-video bg-gray-100 rounded-2xl overflow-hidden relative shadow-inner">
+                    <iframe id="youtubePlayer" class="w-full h-full absolute inset-0" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+
+                <div class="mt-6 text-center text-gray-500 font-medium text-sm md:text-base">
+                    💡 Bu videoyu arkadaşınla paylaşmak için tarayıcıdaki linki kopyalayabilirsin!
+                </div>
             </div>
+
+            <!-- YENİ: Gemini AI Mesaj Üretici Bölümü -->
+            <div class="w-full bg-gradient-to-r from-purple-50 to-pink-50 p-4 md:p-6 rounded-3xl shadow-sm border border-white">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg md:text-xl font-bold text-purple-800 flex items-center gap-2">
+                        ✨ Yapay Zeka ile Mesaj Oluştur
+                    </h3>
+                </div>
+                <p class="text-gray-600 text-sm md:text-base mb-4 font-medium">
+                    Videoyu gönderirken ne yazacağını bilemedin mi? Bırak yapay zeka senin için harika bir kutlama mesajı yazsın!
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-3 mb-4">
+                    <select id="aiToneSelect" class="cute-input flex-1 px-4 py-3 text-base rounded-2xl border-2 border-white shadow-sm font-bold text-soft-dark bg-white cursor-pointer">
+                        <option value="samimi ve tatlı">Samimi & Tatlı 🥰</option>
+                        <option value="komik ve eğlenceli">Komik & Eğlenceli 🤣</option>
+                        <option value="duygusal ve derin">Duygusal 🥺</option>
+                        <option value="kısa ve öz">Kısa & Öz 🎈</option>
+                        <option value="şiirsel">Şiirsel 📜</option>
+                    </select>
+                    <button id="generateAiBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-cute transition-colors duration-200 active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
+                        <span>Mesaj Yazdır ✨</span>
+                    </button>
+                </div>
+
+                <!-- AI Yükleniyor ve Sonuç Alanı -->
+                <div id="aiResultArea" class="hidden mt-4">
+                    <div id="aiLoading" class="hidden text-center py-4 text-purple-600 font-bold flex flex-col items-center gap-2">
+                        <div class="loader"></div>
+                        <span>Yapay zeka mesajı hazırlıyor...</span>
+                    </div>
+                    
+                    <div id="aiMessageContainer" class="hidden relative">
+                        <textarea id="aiMessageText" class="w-full h-32 p-4 bg-white rounded-2xl border border-purple-100 text-soft-dark font-medium resize-none focus:outline-none focus:border-purple-300 transition-colors" readonly></textarea>
+                        <button id="copyAiMsgBtn" class="absolute bottom-3 right-3 bg-gray-100 hover:bg-gray-200 text-soft-dark text-sm font-bold py-2 px-4 rounded-xl transition-colors active:scale-95 flex items-center gap-1">
+                            📋 Kopyala
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
 
     <!-- JavaScript Mantığı -->
     <script>
-        // 1. Veritabanı Ayarları: Google Sheets CSV Bağlantısı
-        // DİKKAT: Kendi sayfanızı yayınladıktan sonra aşağıdaki linki kendi CSV linkinizle değiştirin.
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfaAy-p8OJIW8Z_0vmKmTGXWPp8x10Cxd-bWoYQr8tnEOqj5qbk56ufYf_jnJQSVciDOVKC8G0L6KG/pub?gid=0&single=true&output=csv";
+        // ---------------------------------------------------------
+        // LİNKLERİ BURAYA YAPIŞTIRMAYI UNUTMAYIN!
+        // ---------------------------------------------------------
+        
+        // 1. Google Sheets CSV Linkiniz (Okuma için)
+        const SHEET_CSV_URL = "BURAYA_GOOGLE_SHEETS_CSV_LINKINIZI_YAPISTIRIN";
 
-        // Yedek Veri (Google Sheets linki girilene kadar veya bağlantı koparsa bu veriler görünür)
+        // 2. Google Apps Script Linkiniz (İstek Gönderme için)
+        const APPS_SCRIPT_URL = "BURAYA_APPS_SCRIPT_LINKINI_YAPISTIRIN";
+
+        // 3. Gemini API (Çalışma ortamı tarafından otomatik sağlanır)
+        const apiKey = ""; 
+
+        // Yedek Veri (Test için)
         let appData = [
             { id: 1, name: "Can", youtubeId: "dQw4w9WgXcQ" },
             { id: 2, name: "Candan", youtubeId: "jNQXAC9IVRw" },
-            { id: 3, name: "Caner", youtubeId: "kJQP7kiw5Fk" },
-            { id: 4, name: "Canberk", youtubeId: "9bZkp7q19f0" },
-            { id: 5, name: "Alican", youtubeId: "JGwWNGJdvx8" },
-            { id: 6, name: "Ayşe", youtubeId: "dQw4w9WgXcQ" },
-            { id: 7, name: "Ahmet", youtubeId: "jNQXAC9IVRw" },
-            { id: 8, name: "Zeynep", youtubeId: "kJQP7kiw5Fk" }
+            { id: 3, name: "Zeynep", youtubeId: "kJQP7kiw5Fk" },
+            { id: 4, name: "Ahmet", youtubeId: "9bZkp7q19f0" },
+            { id: 5, name: "Alican", youtubeId: "JGwWNGJdvx8" }
         ];
 
-        // 2. HTML'deki elementleri JavaScript'e tanıtıyoruz
+        // Mevcut ismin tutulduğu global değişken (AI için gerekli)
+        let currentPersonName = "";
+
+        // Elementleri Seçme
         const searchInput = document.getElementById('searchInput');
         const namesGrid = document.getElementById('namesGrid');
         const mainContent = document.getElementById('mainContent');
@@ -102,15 +257,31 @@
         const videoTitle = document.getElementById('videoTitle');
         const youtubePlayer = document.getElementById('youtubePlayer');
         const backBtn = document.getElementById('backBtn');
+        
+        const requestForm = document.getElementById('requestForm');
+        const requestNameInput = document.getElementById('requestNameInput');
+        const requestSubmitBtn = document.getElementById('requestSubmitBtn');
+        const requestMessage = document.getElementById('requestMessage');
 
-        // 3. İsimleri Ekrana Çizdirme Fonksiyonu
+        // AI Elementleri
+        const aiToneSelect = document.getElementById('aiToneSelect');
+        const generateAiBtn = document.getElementById('generateAiBtn');
+        const aiResultArea = document.getElementById('aiResultArea');
+        const aiLoading = document.getElementById('aiLoading');
+        const aiMessageContainer = document.getElementById('aiMessageContainer');
+        const aiMessageText = document.getElementById('aiMessageText');
+        const copyAiMsgBtn = document.getElementById('copyAiMsgBtn');
+
+        // İsimleri Ekrana Çizdirme
         function renderNames(namesToDisplay) {
             namesGrid.innerHTML = '';
 
             if (namesToDisplay.length === 0) {
                 namesGrid.innerHTML = `
-                    <div class="col-span-full text-center py-10 text-gray-500">
-                        Bu isimde henüz bir şarkı bulunamadı. 😔
+                    <div class="col-span-full text-center py-12 bg-white rounded-3xl shadow-sm border border-gray-100">
+                        <div class="text-4xl mb-3">🥺</div>
+                        <h3 class="text-xl font-bold text-soft-dark mb-2">Bu isimde şarkı bulamadık</h3>
+                        <p class="text-gray-500">Hemen yukarıdaki formdan bize istek gönderebilirsin!</p>
                     </div>
                 `;
                 return;
@@ -118,127 +289,238 @@
 
             namesToDisplay.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'bg-cardbg hover:bg-cardhover border border-bordercol p-5 rounded-xl cursor-pointer transition-colors duration-200 group flex flex-col justify-center';
+                card.className = 'bg-white rounded-2xl p-4 md:p-5 shadow-card hover:shadow-cute cursor-pointer transition-all duration-200 transform hover:-translate-y-1 active:scale-95 text-center flex flex-col justify-center items-center gap-2 border border-gray-50';
                 
-                // Karta tıklandığında URL'nin sonuna ismini ekle (İşte Tek Sayfa Mantığı!)
-                card.onclick = () => {
-                    window.location.hash = item.name;
-                };
+                card.onclick = () => { window.location.hash = item.name; };
 
                 card.innerHTML = `
-                    <h3 class="text-xl font-semibold text-gray-100 group-hover:text-blue-400 transition-colors underline decoration-transparent group-hover:decoration-blue-400 underline-offset-4">
+                    <h3 class="text-lg md:text-xl font-extrabold text-soft-dark capitalize w-full truncate">
                         ${item.name}
                     </h3>
-                    <span class="text-sm text-gray-500 mt-2">YouTube'da İzle</span>
+                    <span class="bg-red-50 text-red-500 hover:bg-red-100 transition-colors text-xs md:text-sm font-bold px-3 py-1.5 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                        İzle
+                    </span>
                 `;
                 namesGrid.appendChild(card);
             });
         }
 
-        // 4. Arama Kutusunu Dinleme (Filtreleme İşlemi)
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value;
             const lowerSearchTerm = searchTerm.toLocaleLowerCase('tr-TR');
-
             const filteredData = appData.filter(item => {
-                const lowerName = item.name.toLocaleLowerCase('tr-TR');
-                return lowerName.includes(lowerSearchTerm);
+                return item.name.toLocaleLowerCase('tr-TR').includes(lowerSearchTerm);
             });
-
             renderNames(filteredData);
         });
 
-        // 5. Yönlendirme (Router) Mantığı - URL Hash Dinleyici
+        // İstek Formu İşlemleri
+        requestForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            
+            const requestedName = requestNameInput.value.trim();
+            if(!requestedName) return;
+
+            if (APPS_SCRIPT_URL === "BURAYA_APPS_SCRIPT_LINKINI_YAPISTIRIN") {
+                showMessage("Uyarı: Sistemi henüz Google'a bağlamadınız.", "error");
+                return;
+            }
+
+            const originalBtnText = requestSubmitBtn.innerHTML;
+            requestSubmitBtn.innerHTML = "⏳ Bekle...";
+            requestSubmitBtn.disabled = true;
+            requestSubmitBtn.classList.add('opacity-70');
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: new URLSearchParams({ 'isim': requestedName })
+                });
+
+                if(response.ok) {
+                    showMessage(`Harika! "${requestedName}" listeye eklenmesi için gönderildi 🥳`, "success");
+                    requestNameInput.value = ""; 
+                } else {
+                    throw new Error("Sunucu yanıt vermedi.");
+                }
+
+            } catch (error) {
+                showMessage("Bir hata oluştu, lütfen daha sonra tekrar dene 😔", "error");
+            } finally {
+                requestSubmitBtn.innerHTML = originalBtnText;
+                requestSubmitBtn.disabled = false;
+                requestSubmitBtn.classList.remove('opacity-70');
+            }
+        });
+
+        function showMessage(text, type) {
+            requestMessage.textContent = text;
+            requestMessage.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
+            
+            if (type === "success") {
+                requestMessage.classList.add('bg-green-100', 'text-green-700');
+            } else {
+                requestMessage.classList.add('bg-red-100', 'text-red-700');
+            }
+
+            setTimeout(() => { requestMessage.classList.add('hidden'); }, 5000);
+        }
+
+        // --- GEMINI API ENTEGRASYONU ---
+        
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            let delays = [1000, 2000, 4000, 8000, 16000];
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
+            }
+        }
+
+        generateAiBtn.addEventListener('click', async () => {
+            if (!currentPersonName) return;
+
+            const tone = aiToneSelect.value;
+            const prompt = `Bugün ${currentPersonName} isimli kişinin doğum günü. Ona göndermek için ${tone} bir tonda doğum günü kutlama mesajı yazar mısın? Sadece mesajın kendisini ver, ekstra açıklama yapma. WhatsApp üzerinden göndermeye uygun olsun, emojiler içersin. Maksimum 3-4 cümle olsun.`;
+
+            // UI'ı yükleniyor durumuna al
+            generateAiBtn.disabled = true;
+            generateAiBtn.classList.add('opacity-70', 'cursor-not-allowed');
+            aiResultArea.classList.remove('hidden');
+            aiLoading.classList.remove('hidden');
+            aiMessageContainer.classList.add('hidden');
+            aiMessageText.value = "";
+            copyAiMsgBtn.innerHTML = "📋 Kopyala";
+
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }]
+                };
+
+                const result = await fetchWithRetry(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (generatedText) {
+                    aiMessageText.value = generatedText.trim();
+                    aiLoading.classList.add('hidden');
+                    aiMessageContainer.classList.remove('hidden');
+                } else {
+                    throw new Error("Geçersiz yanıt");
+                }
+            } catch (error) {
+                aiLoading.classList.add('hidden');
+                aiMessageContainer.classList.remove('hidden');
+                aiMessageText.value = "Üzgünüm, mesaj oluşturulurken bir hata oluştu. Lütfen tekrar dene! 😔";
+            } finally {
+                generateAiBtn.disabled = false;
+                generateAiBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        });
+
+        copyAiMsgBtn.addEventListener('click', () => {
+            aiMessageText.select();
+            document.execCommand('copy');
+            copyAiMsgBtn.innerHTML = "✅ Kopyalandı!";
+            setTimeout(() => {
+                copyAiMsgBtn.innerHTML = "📋 Kopyala";
+            }, 2000);
+        });
+
+        // Yönlendirme (Router)
         function handleHashChange() {
-            // Hash'ten # işaretini kaldır ve boşlukları Türkçe karakterleri bozmadan çöz
             const hash = decodeURIComponent(window.location.hash.substring(1));
-
+            
+            // AI Paneli sıfırla
+            aiResultArea.classList.add('hidden');
+            aiMessageText.value = "";
+            
             if (hash) {
-                // URL'deki isme uygun veriyi bul
                 const person = appData.find(p => p.name.toLocaleLowerCase('tr-TR') === hash.toLocaleLowerCase('tr-TR'));
-
                 if (person) {
-                    // İsmi bulduk! Ana ekranı gizle, video ekranını göster
+                    currentPersonName = person.name; // AI için ismi kaydet
+                    
                     mainContent.classList.add('hidden');
                     videoContainer.classList.remove('hidden');
                     videoContainer.classList.add('flex');
-                    
-                    // Başlığı ve YouTube Iframe'ini güncelle (Otomatik başlaması için autoplay=1 ekledik)
-                    videoTitle.innerHTML = `🎉 İyi Ki Doğdun ${person.name}! 🎂`;
+                    // Başlığı şirinleştirdik
+                    videoTitle.innerHTML = `İyi ki doğdun <span class="text-soft-pink">${person.name}</span>! 🎂`;
                     youtubePlayer.src = `https://www.youtube.com/embed/${person.youtubeId}?autoplay=1`;
-                    
-                    // Sayfayı yukarı kaydır
                     window.scrollTo(0, 0);
                 } else {
-                    // İsim veritabanında yoksa ana sayfaya dön
+                    currentPersonName = "";
                     window.location.hash = '';
                 }
             } else {
-                // URL'de isim yoksa (ana sayfadaysak) listeyi göster, videoyu gizle
+                currentPersonName = "";
                 mainContent.classList.remove('hidden');
                 videoContainer.classList.add('hidden');
                 videoContainer.classList.remove('flex');
-                
-                // Arka planda video çalmasını durdurmak için src'yi temizle
                 youtubePlayer.src = '';
             }
         }
 
-        // Geri dön butonuna tıklanınca hash'i temizle (ana sayfaya döner)
-        backBtn.addEventListener('click', () => {
-            window.location.hash = '';
-        });
+        backBtn.addEventListener('click', () => { window.location.hash = ''; });
 
-        // 6. Başlangıç (Init) Fonksiyonu ve Google Sheets'ten Veri Çekme
+        // Uygulama Başlatma ve Veri Çekme
         async function initApp() {
-            namesGrid.innerHTML = '<div class="col-span-full text-center py-10 text-gray-400">Veriler yükleniyor... ⏳</div>';
+            namesGrid.innerHTML = `
+                <div class="col-span-full text-center py-10">
+                    <div class="text-3xl animate-bounce">🎈</div>
+                    <div class="text-gray-500 font-bold mt-2">Şarkılar yükleniyor...</div>
+                </div>
+            `;
 
             if (SHEET_CSV_URL !== "BURAYA_GOOGLE_SHEETS_CSV_LINKINIZI_YAPISTIRIN") {
                 try {
                     const response = await fetch(SHEET_CSV_URL);
                     const text = await response.text();
-                    
-                    // CSV verisini işle (satırlara böl)
                     const rows = text.split('\n');
                     const newData = [];
                     
-                    // İlk satır başlık (İsim, Link) sayıp 1'den başlıyoruz
                     for(let i = 1; i < rows.length; i++) {
                         const row = rows[i].trim();
                         if(row) {
-                            const columns = row.split(','); // Virgülle ayır
+                            const columns = row.split(',');
                             if(columns.length >= 2) {
                                 let name = columns[0].trim();
                                 let youtubeInput = columns[1].trim();
                                 let youtubeId = youtubeInput;
                                 
-                                // Gelişmiş Özellik: Admin tam link girerse içinden ID'yi otomatik ayıkla
                                 if(youtubeInput.includes('v=')) {
                                     youtubeId = youtubeInput.split('v=')[1].split('&')[0];
                                 } else if(youtubeInput.includes('youtu.be/')) {
                                     youtubeId = youtubeInput.split('youtu.be/')[1].split('?')[0];
                                 }
-
                                 newData.push({ id: i, name: name, youtubeId: youtubeId });
                             }
                         }
                     }
-                    
-                    if(newData.length > 0) {
-                        appData = newData; // Yeni verileri sisteme kaydet
-                    }
+                    if(newData.length > 0) appData = newData;
                 } catch (error) {
-                    console.error("Google Sheets'ten veri çekilemedi. Yedek veri kullanılıyor.", error);
+                    console.error("Google Sheets bağlantı hatası.", error);
                 }
             }
-
-            // Sayfa yüklendiğinde yönlendirmeyi ve listelemeyi başlat
             window.addEventListener('hashchange', handleHashChange);
             handleHashChange(); 
             renderNames(appData);
         }
 
-        // Uygulamayı Başlat
         initApp();
     </script>
 </body>
