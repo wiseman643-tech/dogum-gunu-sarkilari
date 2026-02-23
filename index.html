@@ -218,20 +218,36 @@
             loading.classList.remove('hidden');
             container.classList.add('hidden');
 
+            // Eğer API anahtarı boş bırakıldıysa kullanıcıyı baştan uyar
+            if (!apiKey || apiKey === "") {
+                loading.classList.add('hidden');
+                container.classList.remove('hidden');
+                document.getElementById('aiMessageText').value = "Hata: API anahtarı eksik! Lütfen kodun içindeki 'apiKey' kısmını doldurun.";
+                return;
+            }
+
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                // Önizleme modeli yerine stabil olan genel gemini-2.5-flash modeline güncellendi
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
+                
                 const json = await res.json();
+
+                // Eğer Google Cloud'dan bir hata dönerse (kısıtlama, yanlış şifre vb.)
+                if (json.error) {
+                    throw new Error(json.error.message);
+                }
+
                 document.getElementById('aiMessageText').value = json.candidates[0].content.parts[0].text.trim();
                 loading.classList.add('hidden');
                 container.classList.remove('hidden');
             } catch (e) {
                 loading.classList.add('hidden');
                 container.classList.remove('hidden');
-                document.getElementById('aiMessageText').value = "Mesaj oluşturulamadı, lütfen tekrar dene.";
+                document.getElementById('aiMessageText').value = "Bir hata oluştu:\n" + e.message;
             }
         };
 
