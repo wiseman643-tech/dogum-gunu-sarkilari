@@ -130,7 +130,8 @@
 
     <script>
         // --- BAĞLANTI AYARLARI ---
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2IuU4u6GfO_e-I9zN-JqI-V_uL6fO-p-8v6o-q-p-8v6o-q-p-8v6o-q-p-8v6o/pub?output=csv"; // Örnek CSV Linkiniz
+        // DİKKAT: Aşağıdaki linki SİLİP kendi Google Sheets CSV linkinizi yapıştırın!
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfaAy-p8OJIW8Z_0vmKmTGXWPp8x10Cxd-bWoYQr8tnEOqj5qbk56ufYf_jnJQSVciDOVKC8G0L6KG/pub?output=csv"; 
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxubSTS_h79FX_L6Lqe8-B70Zgorr9T-uopebqZU0ZryWAg5Y09b9Y4R_69mujchnVW/exec";
         const apiKey = ""; 
 
@@ -275,16 +276,25 @@
                     const lines = t.split('\n').slice(1);
                     const freshData = [];
                     lines.forEach((l, i) => {
-                        const cols = l.split(',');
-                        if (cols[0] && cols[1]) {
-                            let id = cols[1].trim();
-                            if(id.includes('v=')) id = id.split('v=')[1].split('&')[0];
-                            else if(id.includes('youtu.be/')) id = id.split('youtu.be/')[1].split('?')[0];
-                            freshData.push({ id: i, name: cols[0].trim(), youtubeId: id });
+                        // Türkçe Google Sheets ayarlarında CSV ayırıcısı virgül (,) yerine noktalı virgül (;) olabilir. İkisini de destekliyoruz:
+                        const separator = l.includes(';') ? ';' : ',';
+                        const cols = l.split(separator);
+                        
+                        if (cols.length >= 2) {
+                            let name = cols[0].replace(/"/g, '').trim(); // Olası tırnak işaretlerini temizle
+                            let id = cols[1].replace(/"/g, '').trim();
+                            
+                            if (name && id) {
+                                if(id.includes('v=')) id = id.split('v=')[1].split('&')[0];
+                                else if(id.includes('youtu.be/')) id = id.split('youtu.be/')[1].split('?')[0];
+                                freshData.push({ id: i, name: name, youtubeId: id });
+                            }
                         }
                     });
                     if (freshData.length > 0) appData = freshData;
-                } catch(e) {}
+                } catch(e) {
+                    console.error("Veri çekme hatası:", e);
+                }
             }
             renderNames(appData);
             checkHash();
